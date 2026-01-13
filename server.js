@@ -7,12 +7,8 @@ require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-    origin: "*", // or your frontend domain
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"]
-}));
-app.options("*", cors());
+
+app.use(cors())
 
 const Contact = require("./models/Contact");
 
@@ -26,16 +22,11 @@ app.get("/" , (req,res) =>{
 
 app.post("/contact" , async(req, res)=>{
     try{
-        const {name, email, message,phone,service }= req.body;
-        if (!name || !email || !message) {
-            return res.status(400).json({ message: "All field required" });
-        }
-        const newContact = new Contact({
-            name,
-            email,
-            message,phone,service
-        });
-        await newContact.save();
+        const {name, email,service,message,phone}= req.body;
+        if (!name || !email || !message || !service || !phone) {
+            return res.status(400).json({ message: "All fields required" });
+        } 
+        await Contact.create({name,email,message,phone,service})
 
         res.status(201).json({ message: "Message send succesfully" });
     } catch(error){
@@ -43,7 +34,7 @@ app.post("/contact" , async(req, res)=>{
         res.status(500).json({ message:"Something went wrong"});
     }
 });
-const PORT = process.env.PORT ||5000
+const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
