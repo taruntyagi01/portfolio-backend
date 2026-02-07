@@ -23,10 +23,10 @@ app.get("/" , (req,res) =>{
 app.post("/contact" , async(req, res)=>{
     try{
         const {name, email,service,message,phone}= req.body;
-        if (!name || !email || !message || !service || !phone) {
+        if (!name || !email || !message || !service ) {
             return res.status(400).json({ message: "All fields required" });
         } 
-        await Contact.create({name,email,message,phone,service})
+        await Contact.create({name,email,message,service,phone})
 
         res.status(201).json({ message: "Message send succesfully" });
     } catch(error){
